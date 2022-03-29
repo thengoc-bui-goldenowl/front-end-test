@@ -1,0 +1,76 @@
+    * {
+        margin: 0px auto;
+        padding: 0px;
+        box-sizing: border-box;
+    }
+    
+    a {
+        text-decoration: none;
+    }
+    
+    body {
+        background: #f5f8f9;
+    }
+    
+    .main {}
+    
+    .link span {
+        font-size: 12px;
+    }
+    
+    .create span {
+        border: solid white 1px;
+        background-color: white;
+        color: blue;
+        border-radius: 50%;
+        font-size: 12px;
+    }
+    
+    .header {
+        margin-left: 10px;
+    }
+    
+    .header .heading {
+        color: #75c6ea;
+    }
+    
+    .create {
+        float: right;
+        margin-top: 25px;
+        margin-right: 30px
+    }
+    
+    .btn-func a {
+        background: #1da4df;
+        border-color: #1da4df;
+    }
+    
+    .content {
+        background: white;
+        margin-left: 30px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .head-table .project-name {
+        color: #76848a;
+        margin-top: 30px;
+        font-size: 28px;
+    }
+    
+    .sort .title {
+        color: #d0d0d0;
+        margin-top: 7px;
+    }
+    
+    .sort {
+        float: left;
+    }
+    
+    .select-custom {
+        border: 0px;
+        outline: 0px;
+        color: #8a8a8a;
+    }
+    
+    .table-project {}
