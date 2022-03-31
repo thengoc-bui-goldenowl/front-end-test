@@ -16,15 +16,13 @@ var total_project = data.project.length;
 var count_row = count_default;
 var total_page = Math.ceil(total_project / count_row);;
 var current_page = 1;
-var btn_next = document.querySelector('.btn-next');
-var btn_pre = document.querySelector('.btn-pre');
 var project = data.project;
 
 //
 function select_count() {
     pagination.current_page=1;
     pagination.update_total_page();
-    console.log (pagination.update_total_page())
+    console.log (pagination.count_row)
     pagination.load_page_number();
     //load_data(project, count_row, 0);
     pagination.load_data(0);
@@ -68,29 +66,36 @@ function get_tr() {
     return tr;
 
 }
+
+// Pagination
 class Pagination {
     constructor(data, count_row, current_page){
         this.count_row=count_row;
         this.data=data;
         this.current_page=current_page;
-        this.total_page=total_page
+        this.total_page=total_page;
+        this.btn_pre();
+        this.btn_next();
+        this.change_page();
+        this.load_page_number();
+        this.load_data(0);
     }
     update_total_page() {
         let select = document.getElementById('count');
         this.count_row = select.options[select.selectedIndex].value;
         this.total_page = Math.ceil(this.data.length / this.count_row);
-        return this.total_page
+        return this.total_page, this.count_row
         
     }
     btn_next(){
         var btn_next = document.querySelector('.btn-next');
         btn_next.addEventListener('click', () => {
             //current_page++;
-            if (this.current_page < this.update_total_page()) {
+            if (this.current_page < this.total_page) {
                 this.current_page++;
             }
             this.update_total_page();
-            var start = (this.current_page - 1) * this.count_row
+            var start = (this.current_page - 1) * this.count_row;
             this.load_data(start);
             $('.page-number li').removeClass('active')
             $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
@@ -118,21 +123,29 @@ class Pagination {
     load_data(start) {
         let html = '<tr>';
         let end = parseInt(this.count_row) + parseInt(start);
-        for (let k in this.data) {
-            if (k < end && k >= start || start == -1) {
-                html += '<td>' + this.data[k].id + '</td>';
-                html += '<td><a href="' + this.data[k].link + '">' + this.data[k].name + '</a></td>';
-                html += '<td>' + this.data[k].des + '</td>';
-                html += '<td>' + this.data[k].start + '</td>';
-                html += '<td>' + this.data[k].end + '</td>';
+        let dataView;
+        console.log(start,end)
+        if(start==-1){
+            dataView=this.data;
+        }else{
+            dataView=this.data.slice(start,end);
+        }
+        //console.log(dataView[1].id)
+        for (let k in dataView) {
+            
+                html += '<td>' + dataView[k].id + '</td>';
+                html += '<td><a href="' + dataView[k].link + '">' + dataView[k].name + '</a></td>';
+                html += '<td>' + dataView[k].des + '</td>';
+                html += '<td>' + dataView[k].start + '</td>';
+                html += '<td>' + dataView[k].end + '</td>';
                 html += '<td>';
-                for (let i in this.data[k].Dev) {
-                    html += '<a href="' + this.data[k].Dev[i].link + '">' + this.data[k].Dev[i].name + ' </a>';
+                for (let i in dataView[k].Dev) {
+                    html += '<a href="' + dataView[k].Dev[i].link + '">' + dataView[k].Dev[i].name + ' </a>';
                 }
                 html += '</td>';
                 html += '<td><div class="btn-group-sm"><button type="button" class="btn btn-primary">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>';
                 html += '</tr>';
-            }
+            
         }
         document.getElementById("table").innerHTML = html;
     }
@@ -156,10 +169,4 @@ class Pagination {
     }
 
 }
-let pagination= new Pagination(data.project,count_row,1)
-pagination.load_data(0)
-pagination.btn_pre();
-pagination.btn_next();
-pagination.change_page();
-pagination.load_page_number();
-pagination.load_data(0);
+let pagination= new Pagination(data.project,count_row,1);
