@@ -80,3 +80,11 @@ body {
 }
 
 .table-project {}
+
+.page-number {
+    display: flex;
+}
+
+.page-number li {
+    margin: 0px 10px;
+}
