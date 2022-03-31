@@ -20,100 +20,26 @@ var btn_next = document.querySelector('.btn-next');
 var btn_pre = document.querySelector('.btn-pre');
 var project = data.project;
 
-load_data(project, count_default, 0);
-
-function load_page_number() {
-    let html = '<li class="page-item active"><a class="page-link" href="#">1</a></li>';
-    let select = document.getElementById('count');
-    let count_row = select.options[select.selectedIndex].value;
-    let total_page = Math.ceil(total_project / count_row);
-    console.log('total', total_page)
-    for (let i = 2; i <= total_page; i++) {
-        html += '<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>';
-    }
-    document.getElementById('page-number').innerHTML = html;
-}
-
-btn_next.addEventListener('click', () => {
-    //current_page++;
-    if (current_page < total_page) {
-        current_page++;
-    }
-    var count_row = document.getElementById('count').value;
-    var start = (current_page - 1) * count_row
-    load_data(project, count_row, start);
-    $('.page-number li').removeClass('active')
-    $(`.page-number li:nth-child(${current_page})`).addClass('active');
-
-})
-
-btn_pre.addEventListener('click', () => {
-    // current_page--;
-    if (current_page > 1) {
-        current_page--;
-
-    } else {
-        $('.btn-pre').prop('disabled', true)
-    }
-    var count_row = document.getElementById('count').value;
-    var start = (current_page - 1) * count_row;
-    load_data(project, count_row, start)
-    $('.page-number li').removeClass('active')
-    $(`.page-number li:nth-child(${current_page})`).addClass('active');
-})
-// get total_page
-function total_page() {
-    var count_row = document.getElementById('count');
-    count_row = select.options[select.selectedIndex].value;
-    return total_page = Math.ceil(total_project / count_row);
-}
-
-
-// set number of row
+//
 function select_count() {
-    current_page = 1;
-    let select = document.getElementById('count');
-    var count_row = select.options[select.selectedIndex].value;
-    load_data(project, count_row, 0);
-    total_page = Math.ceil(total_project / count_row);
-    load_page_number();
+    pagination.current_page=1;
+    pagination.update_total_page();
+    console.log (pagination.update_total_page())
+    pagination.load_page_number();
+    //load_data(project, count_row, 0);
+    pagination.load_data(0);
     filter();
+    pagination.change_page();
 }
-//load data to table
-function load_data(data, value, start) {
-    html = '<tr>';
-    let end = parseInt(value) + parseInt(start);
-    console.log("a", value)
-    for (let k in data) {
-        if (k < end && k >= start || value == -1) {
-            html += '<td>' + data[k].id + '</td>';
-            html += '<td><a href="' + data[k].link + '">' + data[k].name + '</a></td>';
-            html += '<td>' + data[k].des + '</td>';
-            html += '<td>' + data[k].start + '</td>';
-            html += '<td>' + data[k].end + '</td>';
-            html += '<td>';
-            for (let i in data[k].Dev) {
-                html += '<a href="' + data[k].Dev[i].link + '">' + data[k].Dev[i].name + ' </a>';
-            }
-            html += '</td>';
-            html += '<td><div class="btn-group-sm"><button type="button" class="btn btn-primary">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>';
-            html += '</tr>';
-        }
-    }
-    document.getElementById("table").innerHTML = html;
-}
-
-//filter project
 function filter() {
     // Declare variables
     var input, filter, table, tr, td, i, txtValue;
+    current_page = 1;
+    pagination.update_total_page();
+    pagination.load_page_number();
     input = document.getElementById("search");
     filter = input.value.toUpperCase();
-    tr = get_tr();
-    for (i = 0; i < tr.length; i++) {
-        tr[i].style.display = "none";
-    }
-    load_data(project, -1, 0);
+    pagination.load_data(-1);
     tr = get_tr();
     // Loop through all table rows, and hide those who don't match the search query
     var sum = 0;
@@ -142,19 +68,98 @@ function get_tr() {
     return tr;
 
 }
-//change page
-function change_page() {
-    const current_pages = document.querySelectorAll('.page-number li');
-    console.log(current_pages)
-    for (let i = 0; i < current_pages.length; i++) {
-        current_pages[i].addEventListener('click', () => {
-            current_page = i + 1;
-            load_data(project, count_row, i * count_row)
+class Pagination {
+    constructor(data, count_row, current_page){
+        this.count_row=count_row;
+        this.data=data;
+        this.current_page=current_page;
+        this.total_page=total_page
+    }
+    update_total_page() {
+        let select = document.getElementById('count');
+        this.count_row = select.options[select.selectedIndex].value;
+        this.total_page = Math.ceil(this.data.length / this.count_row);
+        return this.total_page
+        
+    }
+    btn_next(){
+        var btn_next = document.querySelector('.btn-next');
+        btn_next.addEventListener('click', () => {
+            //current_page++;
+            if (this.current_page < this.update_total_page()) {
+                this.current_page++;
+            }
+            this.update_total_page();
+            var start = (this.current_page - 1) * this.count_row
+            this.load_data(start);
             $('.page-number li').removeClass('active')
-    $(`.page-number li:nth-child(${current_page})`).addClass('active');
+            $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
+        
         })
     }
-}
+    btn_pre(){
+        let btn_pre = document.querySelector('.btn-pre');
+        btn_pre.addEventListener('click', () => {
+            // current_page--;
+            if (this.current_page > 1) {
+                this.current_page--;
+        
+            } else {
+                $('.btn-pre').prop('disabled', true)
+            }
+            this.update_total_page();
+            var start = (this.current_page - 1) * this.count_row;
+            this.load_data(start)
+            $('.page-number li').removeClass('active')
+            $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
+        })
+    }
+    
+    load_data(start) {
+        let html = '<tr>';
+        let end = parseInt(this.count_row) + parseInt(start);
+        for (let k in this.data) {
+            if (k < end && k >= start || start == -1) {
+                html += '<td>' + this.data[k].id + '</td>';
+                html += '<td><a href="' + this.data[k].link + '">' + this.data[k].name + '</a></td>';
+                html += '<td>' + this.data[k].des + '</td>';
+                html += '<td>' + this.data[k].start + '</td>';
+                html += '<td>' + this.data[k].end + '</td>';
+                html += '<td>';
+                for (let i in this.data[k].Dev) {
+                    html += '<a href="' + this.data[k].Dev[i].link + '">' + this.data[k].Dev[i].name + ' </a>';
+                }
+                html += '</td>';
+                html += '<td><div class="btn-group-sm"><button type="button" class="btn btn-primary">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>';
+                html += '</tr>';
+            }
+        }
+        document.getElementById("table").innerHTML = html;
+    }
+    change_page(){
+        let current_pages = document.querySelectorAll('.page-number li');
+        for (let i = 0; i < current_pages.length; i++) {
+            current_pages[i].addEventListener('click', () => {
+                this.current_page = i + 1;
+                this.load_data(i * this.count_row)
+                $('.page-number li').removeClass('active')
+        $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
+            })
+        }
+    }
+    load_page_number() {
+        let html = '<li class="page-item active"><a class="page-link" href="#">1</a></li>';
+        for (let i = 2; i <= this.total_page; i++) {
+            html += '<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>';
+        }
+        document.getElementById('page-number').innerHTML = html;
+    }
 
-load_page_number();
-change_page();
+}
+let pagination= new Pagination(data.project,count_row,1)
+pagination.load_data(0)
+pagination.btn_pre();
+pagination.btn_next();
+pagination.change_page();
+pagination.load_page_number();
+pagination.load_data(0);
