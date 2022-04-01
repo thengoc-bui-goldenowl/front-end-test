@@ -79,12 +79,14 @@ body {
     color: #8a8a8a;
 }
 
-.table-project {}
-
 .page-number {
     display: flex;
 }
 
 .page-number li {
     margin: 0px 10px;
+}
+
+.btn-func {
+    margin-right: 10px;
 }

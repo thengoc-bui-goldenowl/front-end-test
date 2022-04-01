@@ -10,6 +10,12 @@ const data = {
         { "id": "8", "link": "#8", "name": "Zoro", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
         { "id": "9", "link": "#9", "name": "Sasuke", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] }
     ]
+    "dev": [
+        { "id": "1", "fullName": "Doe", "Status": "0" },
+        { "id": "1", "fullName": "Pe", "Status": "1" },
+        { "id": "1", "fullName": "Da Ve", "Status": "0" },
+        { "id": "1", "fullName": "Da Ve", "Status": "0" }
+    ]
 };
 const count_default = document.getElementById('count').value;
 var total_project = data.project.length;
@@ -17,47 +23,61 @@ var count_row = count_default;
 var total_page = Math.ceil(total_project / count_row);;
 var current_page = 1;
 var project = data.project;
-
+var dev = data.dev;
+var dataSearchDate = [];
+var dataSearchProject = [];
 //
 function select_count() {
-    pagination.current_page=1;
-    pagination.update_total_page();
-    console.log (pagination.count_row)
-    pagination.load_page_number();
+    var count_row = document.getElementById('count').value;
+    pagination.current_page = 1;
+    pagination.count_row = count_row;
+    pagination.setUp();
+    //pagination.update_total_page();
+    //pagination.load_page_number();
     //load_data(project, count_row, 0);
-    pagination.load_data(0);
+    //pagination.load_data(0);
     filter();
-    pagination.change_page();
+    // pagination.change_page();
+
+
 }
+
 function filter() {
     // Declare variables
     var input, filter, table, tr, td, i, txtValue;
-    current_page = 1;
-    pagination.update_total_page();
-    pagination.load_page_number();
+    dataSearchProject = [];
     input = document.getElementById("search");
     filter = input.value.toUpperCase();
-    pagination.load_data(-1);
-    tr = get_tr();
-    // Loop through all table rows, and hide those who don't match the search query
-    var sum = 0;
-    for (let j = 0; j < tr.length; j++) {
-
-        let count = document.getElementById('count').value;
-        td = tr[j].getElementsByTagName("td")[1];
-        if (td) {
-            txtValue = td.textContent || td.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                tr[j].style.display = "";
-                sum++;
-            } else {
-                tr[j].style.display = "none";
-            }
-        }
-        if (sum > count) {
-            tr[j].style.display = "none";
+    let dataFilter = pagination.data;
+    for (let i in dataFilter) {
+        if (dataFilter[i].name.toUpperCase().indexOf(filter) > -1) {
+            dataSearchProject.push(dataFilter[i]);
         }
     }
+    let pag = new Pagination(dataSearchProject, count_row, 1)
+        /* pagination.data = project;
+         pagination.count_row = total_project;
+         pagination.load_data(0);
+         tr = get_tr();
+         // Loop through all table rows, and hide those who don't match the search query
+         /* var sum = 0;
+          for (let j = 0; j < tr.length; j++) {
+
+              let count = document.getElementById('count').value;
+              td = tr[j].getElementsByTagName("td")[1];
+              if (td) {
+                  txtValue = td.textContent || td.innerText;
+                  if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                      tr[j].style.display = "";
+                      sum++;
+                  } else {
+                      tr[j].style.display = "none";
+                  }
+              }
+              if (sum > count) {
+                  tr[j].style.display = "none";
+              }
+          }*/
 }
 //get tr
 function get_tr() {
@@ -69,25 +89,26 @@ function get_tr() {
 
 // Pagination
 class Pagination {
-    constructor(data, count_row, current_page){
-        this.count_row=count_row;
-        this.data=data;
-        this.current_page=current_page;
-        this.total_page=total_page;
+    constructor(data, count_row, current_page) {
+        this.count_row = count_row;
+        this.data = data;
+        this.current_page = current_page;
+        this.total_page = total_page;
         this.btn_pre();
         this.btn_next();
-        this.change_page();
+        this.update_total_page();
         this.load_page_number();
         this.load_data(0);
+        this.change_page();
     }
     update_total_page() {
         let select = document.getElementById('count');
         this.count_row = select.options[select.selectedIndex].value;
         this.total_page = Math.ceil(this.data.length / this.count_row);
         return this.total_page, this.count_row
-        
+
     }
-    btn_next(){
+    btn_next() {
         var btn_next = document.querySelector('.btn-next');
         btn_next.addEventListener('click', () => {
             //current_page++;
@@ -99,16 +120,16 @@ class Pagination {
             this.load_data(start);
             $('.page-number li').removeClass('active')
             $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
-        
+
         })
     }
-    btn_pre(){
+    btn_pre() {
         let btn_pre = document.querySelector('.btn-pre');
         btn_pre.addEventListener('click', () => {
             // current_page--;
             if (this.current_page > 1) {
                 this.current_page--;
-        
+
             } else {
                 $('.btn-pre').prop('disabled', true)
             }
@@ -119,44 +140,40 @@ class Pagination {
             $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
         })
     }
-    
+
     load_data(start) {
         let html = '<tr>';
         let end = parseInt(this.count_row) + parseInt(start);
         let dataView;
-        console.log(start,end)
-        if(start==-1){
-            dataView=this.data;
-        }else{
-            dataView=this.data.slice(start,end);
-        }
+        console.log(start, end);
+        dataView = this.data.slice(start, end);
         //console.log(dataView[1].id)
         for (let k in dataView) {
-            
-                html += '<td>' + dataView[k].id + '</td>';
-                html += '<td><a href="' + dataView[k].link + '">' + dataView[k].name + '</a></td>';
-                html += '<td>' + dataView[k].des + '</td>';
-                html += '<td>' + dataView[k].start + '</td>';
-                html += '<td>' + dataView[k].end + '</td>';
-                html += '<td>';
-                for (let i in dataView[k].Dev) {
-                    html += '<a href="' + dataView[k].Dev[i].link + '">' + dataView[k].Dev[i].name + ' </a>';
-                }
-                html += '</td>';
-                html += '<td><div class="btn-group-sm"><button type="button" class="btn btn-primary">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>';
-                html += '</tr>';
-            
+
+            html += '<td>' + dataView[k].id + '</td>';
+            html += '<td><a href="' + dataView[k].link + '">' + dataView[k].name + '</a></td>';
+            html += '<td>' + dataView[k].des + '</td>';
+            html += '<td>' + dataView[k].start + '</td>';
+            html += '<td>' + dataView[k].end + '</td>';
+            html += '<td>';
+            for (let i in dataView[k].Dev) {
+                html += '<a href="' + dataView[k].Dev[i].link + '">' + dataView[k].Dev[i].name + ' </a>';
+            }
+            html += '</td>';
+            html += '<td><div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>';
+            html += '</tr>';
+
         }
         document.getElementById("table").innerHTML = html;
     }
-    change_page(){
+    change_page() {
         let current_pages = document.querySelectorAll('.page-number li');
         for (let i = 0; i < current_pages.length; i++) {
             current_pages[i].addEventListener('click', () => {
                 this.current_page = i + 1;
                 this.load_data(i * this.count_row)
                 $('.page-number li').removeClass('active')
-        $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
+                $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
             })
         }
     }
@@ -167,6 +184,39 @@ class Pagination {
         }
         document.getElementById('page-number').innerHTML = html;
     }
+    setUp() {
+        this.update_total_page();
+        this.load_page_number();
+        this.load_data(0);
+        this.change_page();
+    }
 
 }
-let pagination= new Pagination(data.project,count_row,1);
+var pagination = new Pagination(data.project, count_row, 1);
+$(function() {
+    $(".datepicker").datepicker({
+        dateFormat: 'mm/dd/yy'
+    });
+});
+$('#btnSearchDate').on('click', function() {
+    var dataSearchDate = [];
+    var startDate = new Date($('#startDate').val());
+    var endDate = new Date($('#endDate').val());
+    for (let i in project) {
+        var startDateProject = new Date(project[i].start);
+        var endDateProject = new Date(project[i].end);
+        if (startDateProject >= startDate && startDateProject <= endDate || endDateProject >= startDate && endDateProject <= endDate) {
+            dataSearchDate.push(project[i]);
+        }
+    }
+    console.log(dataSearchDate)
+    pagination.data = dataSearchDate;
+    pagination.current_page = 1;
+    pagination.setUp();
+});
+$('#btnClearSearchDate').on('click', function() {
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    dataSearchDate = [];
+    var pagination = new Pagination(project, count_row, 1);
+})
