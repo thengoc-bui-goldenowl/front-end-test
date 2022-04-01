@@ -9,12 +9,12 @@ const data = {
         { "id": "7", "link": "#7", "name": "Near", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
         { "id": "8", "link": "#8", "name": "Zoro", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
         { "id": "9", "link": "#9", "name": "Sasuke", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] }
-    ]
+    ],
     "dev": [
-        { "id": "1", "fullName": "Doe", "Status": "0" },
-        { "id": "1", "fullName": "Pe", "Status": "1" },
-        { "id": "1", "fullName": "Da Ve", "Status": "0" },
-        { "id": "1", "fullName": "Da Ve", "Status": "0" }
+        { "id": "1", "name": "Doe", "link": "#a", "Status": "0" },
+        { "id": "1", "name": "Pe", "link": "#a", "Status": "1" },
+        { "id": "1", "name": "Da Ve", "link": "#a", "Status": "0" },
+        { "id": "1", "name": "Da Ve", "link": "#a", "Status": "0" }
     ]
 };
 const count_default = document.getElementById('count').value;
@@ -26,71 +26,12 @@ var project = data.project;
 var dev = data.dev;
 var dataSearchDate = [];
 var dataSearchProject = [];
-//
-function select_count() {
-    var count_row = document.getElementById('count').value;
-    pagination.current_page = 1;
-    pagination.count_row = count_row;
-    pagination.setUp();
-    //pagination.update_total_page();
-    //pagination.load_page_number();
-    //load_data(project, count_row, 0);
-    //pagination.load_data(0);
-    filter();
-    // pagination.change_page();
-
-
-}
-
-function filter() {
-    // Declare variables
-    var input, filter, table, tr, td, i, txtValue;
-    dataSearchProject = [];
-    input = document.getElementById("search");
-    filter = input.value.toUpperCase();
-    let dataFilter = pagination.data;
-    for (let i in dataFilter) {
-        if (dataFilter[i].name.toUpperCase().indexOf(filter) > -1) {
-            dataSearchProject.push(dataFilter[i]);
-        }
-    }
-    let pag = new Pagination(dataSearchProject, count_row, 1)
-        /* pagination.data = project;
-         pagination.count_row = total_project;
-         pagination.load_data(0);
-         tr = get_tr();
-         // Loop through all table rows, and hide those who don't match the search query
-         /* var sum = 0;
-          for (let j = 0; j < tr.length; j++) {
-
-              let count = document.getElementById('count').value;
-              td = tr[j].getElementsByTagName("td")[1];
-              if (td) {
-                  txtValue = td.textContent || td.innerText;
-                  if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                      tr[j].style.display = "";
-                      sum++;
-                  } else {
-                      tr[j].style.display = "none";
-                  }
-              }
-              if (sum > count) {
-                  tr[j].style.display = "none";
-              }
-          }*/
-}
-//get tr
-function get_tr() {
-    table = document.getElementById("table");
-    tr = table.getElementsByTagName("tr");
-    return tr;
-
-}
-
-// Pagination
+var pagination
+    //// Pagination
 class Pagination {
-    constructor(data, count_row, current_page) {
+    constructor(data, count_row, current_page, showValue) {
         this.count_row = count_row;
+        this.showValue = showValue;
         this.data = data;
         this.current_page = current_page;
         this.total_page = total_page;
@@ -147,22 +88,34 @@ class Pagination {
         let dataView;
         console.log(start, end);
         dataView = this.data.slice(start, end);
-        //console.log(dataView[1].id)
-        for (let k in dataView) {
+        if (this.showValue == 0) {
+            //console.log(dataView[1].id)
+            for (let k in dataView) {
 
-            html += '<td>' + dataView[k].id + '</td>';
-            html += '<td><a href="' + dataView[k].link + '">' + dataView[k].name + '</a></td>';
-            html += '<td>' + dataView[k].des + '</td>';
-            html += '<td>' + dataView[k].start + '</td>';
-            html += '<td>' + dataView[k].end + '</td>';
-            html += '<td>';
-            for (let i in dataView[k].Dev) {
-                html += '<a href="' + dataView[k].Dev[i].link + '">' + dataView[k].Dev[i].name + ' </a>';
+                html += `<td>${dataView[k].id}</td>
+                <td><a href="${dataView[k].link}">${dataView[k].name}</a></td>
+                <td>${dataView[k].des}</td>
+                <td>${dataView[k].start}</td>
+                <td>${dataView[k].end}</td>
+                <td>`
+                for (let i in dataView[k].Dev) {
+                    html += `<a href="${dataView[k].Dev[i].link}">${dataView[k].Dev[i].name}</a>`
+                }
+                html += `</td>
+                <td><div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>
+                </tr>`;
+
             }
-            html += '</td>';
-            html += '<td><div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>';
-            html += '</tr>';
+        } else {
+            for (let k in dataView) {
 
+                html += `<td>${dataView[k].id}</td>
+                <td><a href="${dataView[k].link}">${dataView[k].name}</a></td>
+                <td>${dataView[k].Status}</td>
+                <td><div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><label class="switch"><input type="checkbox" checked><span class="slider round"></span></label></div></td>
+                </tr>`
+
+            }
         }
         document.getElementById("table").innerHTML = html;
     }
@@ -192,7 +145,64 @@ class Pagination {
     }
 
 }
-var pagination = new Pagination(data.project, count_row, 1);
+// select number of row
+function select_count() {
+    var count_row = document.getElementById('count').value;
+    pagination.current_page = 1;
+    pagination.count_row = count_row;
+    pagination.setUp();
+    filter();
+}
+
+// select project/dev
+function selectShow() {
+
+    var selectShowValue = document.getElementById('selectShow').value;
+    let html = "";
+    if (selectShowValue == "0") {
+        headerName.innerText = "Project";
+        headerLink.innerText = "Project";
+        projectName.innerText = "Project List";
+        html += `<tr><th>ID</th><th>Name</th><th>Description</th><th>Start Date</th>
+        <th>End Date</th><th>Dev</th><th>Action</th></tr>`;
+        document.getElementById("thead").innerHTML = html;
+        pagination = new Pagination(data.project, count_row, 1, 0);
+    } else {
+        headerName.innerText = "Developer";
+        headerLink.innerText = "Developer";
+        projectName.innerText = "Developer List";
+        html += `<tr><th>ID</th><th>Fullname</th><th>Status</th>
+        <th>Action</th></tr>`;
+        document.getElementById("thead").innerHTML = html;
+        pagination = new Pagination(data.dev, count_row, 1, 1);
+    }
+}
+
+function filter() {
+    var input, filter, table, tr, td, i, txtValue;
+    dataSearchProject = [];
+    input = document.getElementById("search");
+    filter = input.value.toUpperCase();
+    let dataFilter = pagination.data;
+    console.log("a", dataFilter)
+    for (let i in dataFilter) {
+        if (dataFilter[i].name.toUpperCase().indexOf(filter) > -1) {
+            dataSearchProject.push(dataFilter[i]);
+        }
+    }
+    console.log(dataSearchProject)
+    let paag = new Pagination(dataSearchProject, count_row, 1, parseInt(document.getElementById('selectShow').value))
+}
+//get tr
+function get_tr() {
+    table = document.getElementById("table");
+    tr = table.getElementsByTagName("tr");
+    return tr;
+
+}
+
+selectShow();
+
 $(function() {
     $(".datepicker").datepicker({
         dateFormat: 'mm/dd/yy'
@@ -202,13 +212,11 @@ $('#btnSearchDate').on('click', function() {
     var dataSearchDate = [];
     var startDate = new Date($('#startDate').val());
     var endDate = new Date($('#endDate').val());
-    for (let i in project) {
-        var startDateProject = new Date(project[i].start);
-        var endDateProject = new Date(project[i].end);
-        if (startDateProject >= startDate && startDateProject <= endDate || endDateProject >= startDate && endDateProject <= endDate) {
-            dataSearchDate.push(project[i]);
-        }
-    }
+    dataSearchDate = project.filter(function(i) {
+        var startDateProject = new Date(i.start);
+        var endDateProject = new Date(i.end);
+        return startDateProject >= startDate && startDateProject <= endDate || endDateProject >= startDate && endDateProject <= endDate
+    });
     console.log(dataSearchDate)
     pagination.data = dataSearchDate;
     pagination.current_page = 1;
@@ -217,6 +225,13 @@ $('#btnSearchDate').on('click', function() {
 $('#btnClearSearchDate').on('click', function() {
     document.getElementById('startDate').value = '';
     document.getElementById('endDate').value = '';
+    document.getElementById('search').value = '';
     dataSearchDate = [];
-    var pagination = new Pagination(project, count_row, 1);
+    let select = parseInt(document.getElementById('selectShow').value);
+    if (select == 0) {
+        pagination = new Pagination(project, count_row, 1, 0);
+
+    } else {
+        pagination = new Pagination(dev, count_row, 1, 1);
+    }
 })

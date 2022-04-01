@@ -18,11 +18,11 @@
     <div class="container-fluid main">
         <header class="header row">
             <div class="col">
-                <header class="heading mt-3 h2">Projects</header>
+                <header class="heading mt-3 h2" id="headerName"></header>
                 <div class="link pb-3">
                     <div>
                         <a href="#" class="text-black-50">HOME</a> <span class=ti-angle-right></span>
-                        <b>PROJECT</b>
+                        <b id="headerLink"></b>
                     </div>
                 </div>
             </div>
@@ -51,7 +51,13 @@
         <main class="content row">
             <!--Head-Table-->
             <header class="head-table">
-                <h3 class="project-name">Project List</h3>
+                <div class="select col-3 selectShow">
+                    <select id="selectShow" onchange="selectShow()" class="form-select select-custom">
+                    <option value="0">Project</option>
+                    <option value="1">Dev</option>
+                  </select>
+                </div>
+                <h3 class="project-name" id="projectName"></h3>
                 <div class="sort d-flex flex-row">
                     <div class="title">SORT:</div>
                     <div class="select">
@@ -83,144 +89,9 @@
             <!--table-->
             <div class="table-project table-responsive">
                 <table class="table table-bordered table-hover text-center ">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Dev</th>
-                            <th>Action</th>
-                        </tr>
+                    <thead id="thead">
                     </thead>
                     <tbody id="table">
-                        <!--<tr>
-                            <td>1</td>
-                            <td><a href="#">Doe</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Devid</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Mana</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Zoro</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Sasuke</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Dangg</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Near</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Doe</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td><a href="#">Doe</a></td>
-                            <td>john@example.com</td>
-                            <td>12</td>
-                            <td>15</td>
-                            <td> <a href="#">Doe</a>, <a href="#">Marry</a></td>
-                            <td>
-                                <div class="btn-group-sm">
-                                    <button type="button" class="btn btn-primary">Update</button>
-                                    <button type="button" class="btn btn-danger">Remove</button>
-                                </div>
-                            </td>
-                        </tr>-->
                     </tbody>
                 </table>
                 <footer class="row">
