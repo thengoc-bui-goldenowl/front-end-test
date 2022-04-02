@@ -1,20 +1,22 @@
 const data = {
 
-    "project": [{ "id": "1", "link": "#1", "name": "Doe", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Pe", "link": "#b" }] },
-        { "id": "2", "link": "#2", "name": "Kai", "des": "d1", "start": "12/1/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
-        { "id": "3", "link": "#3", "name": "Kid", "des": "d1", "start": "12/4/2019", "end": "1/1/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
-        { "id": "4", "link": "#4", "name": "Gin", "des": "d1", "start": "12/2/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
-        { "id": "5", "link": "#5", "name": "Lao", "des": "d1", "start": "12/5/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
-        { "id": "6", "link": "#6", "name": "Mana", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
-        { "id": "7", "link": "#7", "name": "Near", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
-        { "id": "8", "link": "#8", "name": "Zoro", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] },
-        { "id": "9", "link": "#9", "name": "Sasuke", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": [{ "name": "Doe", "link": "#a" }, { "name": "Doe", "link": "#a" }] }
+    "project": [{ "id": "1", "link": "#1", "name": "Doe", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": "Doe" },
+        { "id": "2", "link": "#2", "name": "Kai", "des": "d1", "start": "12/1/2019", "end": "1/3/2020", "Dev": "Da Ve" },
+        { "id": "3", "link": "#3", "name": "Kid", "des": "d1", "start": "12/4/2019", "end": "1/1/2020", "Dev": "Jack" },
+        { "id": "4", "link": "#4", "name": "Gin", "des": "d1", "start": "12/2/2019", "end": "1/3/2020", "Dev": "Maya" },
+        { "id": "5", "link": "#5", "name": "Lao", "des": "d1", "start": "12/5/2019", "end": "1/3/2020", "Dev": "Kin" },
+        { "id": "6", "link": "#6", "name": "Mana", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": "Jack" },
+        { "id": "7", "link": "#7", "name": "Near", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": "Kin" },
+        { "id": "8", "link": "#8", "name": "Zoro", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": "Kay" },
+        { "id": "9", "link": "#9", "name": "Sasuke", "des": "d1", "start": "12/12/2019", "end": "1/3/2020", "Dev": "Kin" }
     ],
     "dev": [
         { "id": "1", "name": "Doe", "link": "#a", "Status": "0" },
-        { "id": "1", "name": "Pe", "link": "#a", "Status": "1" },
-        { "id": "1", "name": "Da Ve", "link": "#a", "Status": "0" },
-        { "id": "1", "name": "Da Ve", "link": "#a", "Status": "0" }
+        { "id": "1", "name": "Jack", "link": "#a", "Status": "1" },
+        { "id": "1", "name": "Maya", "link": "#a", "Status": "0" },
+        { "id": "1", "name": "Kin", "link": "#a", "Status": "1" },
+        { "id": "1", "name": "Jack", "link": "#a", "Status": "0" },
+        { "id": "1", "name": "Kay", "link": "#a", "Status": "0" }
     ]
 };
 const count_default = document.getElementById('count').value;
@@ -24,17 +26,27 @@ var total_page = Math.ceil(total_project / count_row);;
 var current_page = 1;
 var project = data.project;
 var dev = data.dev;
-var dataSearchDate = [];
-var dataSearchProject = [];
-var pagination
-    //// Pagination
+
+function getPropertyData(data) {
+    let propertyData = Object.getOwnPropertyNames(data[0]);
+    propertyData.push("Action");
+    propertyData = propertyData.filter(function(item) {
+        return item != "link";
+    })
+    return propertyData
+}
 class Pagination {
-    constructor(data, count_row, current_page, showValue) {
+    constructor(data, count_row, current_page, showValue, tableId) {
         this.count_row = count_row;
+        this.tableId = tableId;
         this.showValue = showValue;
         this.data = data;
         this.current_page = current_page;
         this.total_page = total_page;
+        this.paginationInit();
+
+    }
+    paginationInit() {
         this.btn_pre();
         this.btn_next();
         this.update_total_page();
@@ -50,7 +62,7 @@ class Pagination {
 
     }
     btn_next() {
-        var btn_next = document.querySelector('.btn-next');
+        var btn_next = document.querySelector(`.btn-next${this.tableId}`);
         btn_next.addEventListener('click', () => {
             //current_page++;
             if (this.current_page < this.total_page) {
@@ -59,83 +71,77 @@ class Pagination {
             this.update_total_page();
             var start = (this.current_page - 1) * this.count_row;
             this.load_data(start);
-            $('.page-number li').removeClass('active')
-            $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
+            $(`.page-number${this.tableId} li`).removeClass('active')
+            $(`.page-number${this.tableId} li:nth-child(${this.current_page})`).addClass('active');
 
         })
     }
     btn_pre() {
-        let btn_pre = document.querySelector('.btn-pre');
+        var a = this.tableId
+        console.log(a)
+        var btn_pre = document.querySelector(`.btn-pre${this.tableId}`);
+
         btn_pre.addEventListener('click', () => {
             // current_page--;
             if (this.current_page > 1) {
                 this.current_page--;
 
             } else {
-                $('.btn-pre').prop('disabled', true)
+                $(`.btn-pre${this.tableId}`).prop('disabled', true)
             }
             this.update_total_page();
             var start = (this.current_page - 1) * this.count_row;
-            this.load_data(start)
-            $('.page-number li').removeClass('active')
-            $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
+            this.load_data(start);
+            $(`.page-number${this.tableId} li`).removeClass('active')
+            $(`.page-number${this.tableId} li:nth-child(${this.current_page})`).addClass('active');
         })
     }
 
     load_data(start) {
         let html = '<tr>';
         let end = parseInt(this.count_row) + parseInt(start);
-        let dataView;
-        console.log(start, end);
-        dataView = this.data.slice(start, end);
-        if (this.showValue == 0) {
-            //console.log(dataView[1].id)
-            for (let k in dataView) {
-
-                html += `<td>${dataView[k].id}</td>
-                <td><a href="${dataView[k].link}">${dataView[k].name}</a></td>
-                <td>${dataView[k].des}</td>
-                <td>${dataView[k].start}</td>
-                <td>${dataView[k].end}</td>
-                <td>`
-                for (let i in dataView[k].Dev) {
-                    html += `<a href="${dataView[k].Dev[i].link}">${dataView[k].Dev[i].name}</a>`
+        let dataView = this.data.slice(start, end);
+        let propertyData = Object.getOwnPropertyNames(dataView[0]);
+        propertyData = propertyData.filter(function(item) {
+            return item != "link";
+        })
+        let action = ['<div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><button type="button" class="btn btn-danger">Remove</button></div>', '<div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><label class="switch"><input type="checkbox" checked><span class="slider round"></span></label></div>'];
+        for (let i of dataView) {
+            for (let j of propertyData) {
+                html += '<td>';
+                if (j == "name" || j == "Dev") {
+                    html += `<a href="">${i[j]}</a>`;
+                } else {
+                    html += `${i[j]}`;
                 }
-                html += `</td>
-                <td><div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><button type="button" class="btn btn-danger">Remove</button></div></td>
+                html += '</td>'
+            }
+
+            html += `
+                <td>${action[this.showValue]}</td>
                 </tr>`;
 
-            }
-        } else {
-            for (let k in dataView) {
-
-                html += `<td>${dataView[k].id}</td>
-                <td><a href="${dataView[k].link}">${dataView[k].name}</a></td>
-                <td>${dataView[k].Status}</td>
-                <td><div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><label class="switch"><input type="checkbox" checked><span class="slider round"></span></label></div></td>
-                </tr>`
-
-            }
         }
-        document.getElementById("table").innerHTML = html;
+        document.getElementById(`tbody${this.tableId}`).innerHTML = html;
     }
+
     change_page() {
-        let current_pages = document.querySelectorAll('.page-number li');
+        let current_pages = document.querySelectorAll(`.page-number${this.tableId} li`);
         for (let i = 0; i < current_pages.length; i++) {
             current_pages[i].addEventListener('click', () => {
                 this.current_page = i + 1;
                 this.load_data(i * this.count_row)
-                $('.page-number li').removeClass('active')
-                $(`.page-number li:nth-child(${this.current_page})`).addClass('active');
+                $(`.page-number${this.tableId} li`).removeClass('active')
+                $(`.page-number${this.tableId} li:nth-child(${this.current_page})`).addClass('active');
             })
         }
     }
     load_page_number() {
-        let html = '<li class="page-item active"><a class="page-link" href="#">1</a></li>';
+        let $html = '<li class="page-item active"><a class="page-link" href="#">1</a></li>';
         for (let i = 2; i <= this.total_page; i++) {
-            html += '<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>';
+            $html += '<li class="page-item"><a class="page-link" href="#">' + i + '</a></li>';
         }
-        document.getElementById('page-number').innerHTML = html;
+        $(`#page-number${this.tableId}`).html($html);
     }
     setUp() {
         this.update_total_page();
@@ -145,64 +151,68 @@ class Pagination {
     }
 
 }
+
+function setPagSelect(pag) {
+    pag.current_page = 1;
+    pag.count_row = count_row;
+    pag.setUp();
+}
 // select number of row
 function select_count() {
     var count_row = document.getElementById('count').value;
-    pagination.current_page = 1;
-    pagination.count_row = count_row;
-    pagination.setUp();
+    setPagSelect(pagination0);
+    setPagSelect(pagination1);
     filter();
 }
 
 // select project/dev
 function selectShow() {
-
-    var selectShowValue = document.getElementById('selectShow').value;
-    let html = "";
-    if (selectShowValue == "0") {
-        headerName.innerText = "Project";
-        headerLink.innerText = "Project";
-        projectName.innerText = "Project List";
-        html += `<tr><th>ID</th><th>Name</th><th>Description</th><th>Start Date</th>
-        <th>End Date</th><th>Dev</th><th>Action</th></tr>`;
-        document.getElementById("thead").innerHTML = html;
-        pagination = new Pagination(data.project, count_row, 1, 0);
-    } else {
-        headerName.innerText = "Developer";
-        headerLink.innerText = "Developer";
-        projectName.innerText = "Developer List";
-        html += `<tr><th>ID</th><th>Fullname</th><th>Status</th>
-        <th>Action</th></tr>`;
-        document.getElementById("thead").innerHTML = html;
-        pagination = new Pagination(data.dev, count_row, 1, 1);
-    }
+    /*
+        var selectShowValue = document.getElementById('selectShow').value;
+        let html = "";
+        if (selectShowValue == "0") {
+            headerName.innerText = "Project";
+            headerLink.innerText = "Project";
+            projectName.innerText = "Project List";
+            html += `<tr><th>ID</th><th>Name</th><th>Description</th><th>Start Date</th>
+            <th>End Date</th><th>Dev</th><th>Action</th></tr>`;
+            document.getElementById("thead").innerHTML = html;
+            pagination = new Pagination(data.project, count_row, 1, 0);
+        } else {
+            headerName.innerText = "Developer";
+            headerLink.innerText = "Developer";
+            projectName.innerText = "Developer List";
+            html += `<tr><th>ID</th><th>Fullname</th><th>Status</th>
+            <th>Action</th></tr>`;
+            document.getElementById("thead").innerHTML = html;
+            pagination = new Pagination(data.dev, count_row, 1, 1);
+        }*/
 }
 
-function filter() {
-    var input, filter, table, tr, td, i, txtValue;
-    dataSearchProject = [];
-    input = document.getElementById("search");
-    filter = input.value.toUpperCase();
-    let dataFilter = pagination.data;
-    console.log("a", dataFilter)
+function filterData(dataset) {
+    let dataSearchProject = [];
+    let dataFilter = dataset;
+    let input = document.getElementById("search");
+    let filter = input.value.toUpperCase();
     for (let i in dataFilter) {
         if (dataFilter[i].name.toUpperCase().indexOf(filter) > -1) {
             dataSearchProject.push(dataFilter[i]);
         }
     }
-    console.log(dataSearchProject)
-    let paag = new Pagination(dataSearchProject, count_row, 1, parseInt(document.getElementById('selectShow').value))
-}
-//get tr
-function get_tr() {
-    table = document.getElementById("table");
-    tr = table.getElementsByTagName("tr");
-    return tr;
+    return dataSearchProject
 
 }
 
-selectShow();
+function setDataFilter(table, dataset) {
+    table.data = dataset;
+    table.current_page = 1;
+    table.pagination();
+}
 
+function filter() {
+    setDataFilter(table0, filterData(pagination0.data))
+    setDataFilter(table1, filterData(pagination1.data))
+}
 $(function() {
     $(".datepicker").datepicker({
         dateFormat: 'mm/dd/yy'
@@ -218,9 +228,8 @@ $('#btnSearchDate').on('click', function() {
         return startDateProject >= startDate && startDateProject <= endDate || endDateProject >= startDate && endDateProject <= endDate
     });
     console.log(dataSearchDate)
-    pagination.data = dataSearchDate;
-    pagination.current_page = 1;
-    pagination.setUp();
+    setDataFilter(table0, dataSearchDate)
+
 });
 $('#btnClearSearchDate').on('click', function() {
     document.getElementById('startDate').value = '';
@@ -228,10 +237,79 @@ $('#btnClearSearchDate').on('click', function() {
     document.getElementById('search').value = '';
     dataSearchDate = [];
     let select = parseInt(document.getElementById('selectShow').value);
-    if (select == 0) {
+    setDataFilter(table0, filterData(project));
+    setDataFilter(table1, filterData(dev));
+    /*if (select == 0) {
         pagination = new Pagination(project, count_row, 1, 0);
 
     } else {
         pagination = new Pagination(dev, count_row, 1, 1);
-    }
+    }*/
 })
+
+function openForm() {
+    document.getElementById("popupForm").style.display = "block";
+}
+
+function closeForm() {
+    document.getElementById("popupForm").style.display = "none";
+}
+class Table {
+    constructor(data, count_row, current_page, tableId, tableName) {
+        this.current_page = current_page;
+        this.count_row = count_row;
+        this.data = data;
+        this.tableId = tableId;
+        this.tableName = tableName;
+        this.tableInit();
+        // this.pagination();
+
+    }
+
+    tableInit() {
+        let thead = '<tr>';
+        let propertyData = getPropertyData(this.data);
+        for (let i of propertyData) {
+            console.log(i)
+            thead += `<th>${i.toUpperCase()}</th>`;
+        }
+        thead += '</tr>';
+        let $html = `<h3 class="project-name" id="projectName">${this.tableName}</h3>
+        <div class="table-project table-responsive">
+        <table class="table table-bordered table-hover text-center " id="table${this.tableId}">
+            <thead id="thead${this.tableId}">
+            ${thead}
+            </thead>
+            <tbody id="tbody${this.tableId}">
+            </tbody>
+        </table>
+        <footer class="row">
+            <div class="col-3">
+                <ul id="pagination" class="pagination">
+
+                    <li class="page-item${this.tableId}"><a class="page-link btn-pre${this.tableId}" href="#">Previous</a></li>
+                    <nav id="page-number${this.tableId}" class="page-number page-number${this.tableId}">
+                    </nav>
+                    <!-- <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>-->
+                    <li class="page-item"><a class="page-link btn-next${this.tableId}" href="#">Next</a></li>
+                </ul>
+            </div>
+        </footer>
+    </div>`
+            //document.getElementById('totalTable').append(html);
+        $('.totalTable').append($html);
+    }
+    pagination() {
+
+        let pag = new Pagination(this.data, this.count_row, this.current_page, this.tableId, this.tableId);
+        return pag;
+    }
+
+}
+var table0 = new Table(project, 3, 1, "0", "Project List")
+var pagination0 = table0.pagination();
+var table1 = new Table(dev, 3, 1, "1", "Developer List")
+var pagination1 = table1.pagination();
+//var abc = new Pagination(project, 3, 1, 0, "0")
