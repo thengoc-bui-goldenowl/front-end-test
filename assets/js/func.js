@@ -75,14 +75,13 @@ class Pagination {
             $(`.page-number${this.tableId} li:nth-child(${this.current_page})`).addClass('active');
 
         })
+
     }
     btn_pre() {
         var a = this.tableId
-        console.log(a)
         var btn_pre = document.querySelector(`.btn-pre${this.tableId}`);
 
         btn_pre.addEventListener('click', () => {
-            // current_page--;
             if (this.current_page > 1) {
                 this.current_page--;
 
@@ -108,11 +107,11 @@ class Pagination {
         let action = ['<div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><button type="button" class="btn btn-danger">Remove</button></div>', '<div class="btn-group-sm"><button type="button" class="btn btn-primary btn-func">Update</button><label class="switch"><input type="checkbox" checked><span class="slider round"></span></label></div>'];
         for (let i of dataView) {
             for (let j of propertyData) {
-                html += '<td>';
+                html += '<td ';
                 if (j == "name" || j == "Dev") {
-                    html += `<a href="">${i[j]}</a>`;
+                    html += `style="cursor:pointer">${i[j]}`;
                 } else {
-                    html += `${i[j]}`;
+                    html += `>${i[j]}`;
                 }
                 html += '</td>'
             }
@@ -166,28 +165,7 @@ function select_count() {
 }
 
 // select project/dev
-function selectShow() {
-    /*
-        var selectShowValue = document.getElementById('selectShow').value;
-        let html = "";
-        if (selectShowValue == "0") {
-            headerName.innerText = "Project";
-            headerLink.innerText = "Project";
-            projectName.innerText = "Project List";
-            html += `<tr><th>ID</th><th>Name</th><th>Description</th><th>Start Date</th>
-            <th>End Date</th><th>Dev</th><th>Action</th></tr>`;
-            document.getElementById("thead").innerHTML = html;
-            pagination = new Pagination(data.project, count_row, 1, 0);
-        } else {
-            headerName.innerText = "Developer";
-            headerLink.innerText = "Developer";
-            projectName.innerText = "Developer List";
-            html += `<tr><th>ID</th><th>Fullname</th><th>Status</th>
-            <th>Action</th></tr>`;
-            document.getElementById("thead").innerHTML = html;
-            pagination = new Pagination(data.dev, count_row, 1, 1);
-        }*/
-}
+function selectShow() {}
 
 function filterData(dataset) {
     let dataSearchProject = [];
@@ -239,12 +217,6 @@ $('#btnClearSearchDate').on('click', function() {
     let select = parseInt(document.getElementById('selectShow').value);
     setDataFilter(table0, filterData(project));
     setDataFilter(table1, filterData(dev));
-    /*if (select == 0) {
-        pagination = new Pagination(project, count_row, 1, 0);
-
-    } else {
-        pagination = new Pagination(dev, count_row, 1, 1);
-    }*/
 })
 
 function openForm() {
@@ -262,7 +234,6 @@ class Table {
         this.tableId = tableId;
         this.tableName = tableName;
         this.tableInit();
-        // this.pagination();
 
     }
 
@@ -285,7 +256,7 @@ class Table {
         </table>
         <footer class="row">
             <div class="col-3">
-                <ul id="pagination" class="pagination">
+                <ul id="pagination${this.tableId}" class="pagination">
 
                     <li class="page-item${this.tableId}"><a class="page-link btn-pre${this.tableId}" href="#">Previous</a></li>
                     <nav id="page-number${this.tableId}" class="page-number page-number${this.tableId}">
@@ -312,4 +283,21 @@ var table0 = new Table(project, 3, 1, "0", "Project List")
 var pagination0 = table0.pagination();
 var table1 = new Table(dev, 3, 1, "1", "Developer List")
 var pagination1 = table1.pagination();
-//var abc = new Pagination(project, 3, 1, 0, "0")
+$('#totalTable tr td').click(function() {
+    //console.log($(this).text());
+    //alert($(this).DataTable().row(this).data())
+
+    var $rowValue = [];
+    let $row = $(this).closest("tr");
+    let tdLength = $(this).closest("tr").children("td").length;
+    for (let i = 0; i < tdLength - 1; i++) {
+        $rowValue.push($row.find(`td:eq(${i})`).text());
+    }
+    console.log($(this).text());
+
+});
+$("#totalTable tr td:nth-child(2), td:nth-child(6)").hover(function() {
+    $(this).css("text-decoration", "underline");
+}, function() {
+    $(this).css("text-decoration", "none");
+})
