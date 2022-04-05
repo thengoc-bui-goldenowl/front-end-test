@@ -17,7 +17,7 @@
     <div class="loginPopup">
         <div class="formPopup" id="popupForm">
             <form action="/action_page.php" class="formContainer">
-                <h2>Please Log in</h2>
+                <h2>New Project</h2>
                 <label for="email">
               <strong>E-mail</strong>
             </label>
@@ -51,7 +51,7 @@
                     <ul class="dropdown-menu">
                         <li>
                             <div class="openBtn">
-                                <button class="openButton dropdown-item" onclick="openForm()"><strong>Open Form</strong></button>
+                                <button class="openButton dropdown-item" onclick="openForm()">Create Project</button>
                             </div>
 
                         </li>
@@ -114,11 +114,19 @@
             </div>
 
         </main>
+        <div class="clock">
+            <button id="start" class="btn-primary">Start</button>
+            <button id="stop" class="btn-danger">Stop</button>
+            <button id="resume" class="btn-primary">Resume</button>
+            <button id="reset" class="btn-danger">Reset</button>
+            <p id="time"></p>
+        </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
     <script src="assets/js/func.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

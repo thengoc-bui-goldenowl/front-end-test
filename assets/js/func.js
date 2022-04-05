@@ -100,7 +100,12 @@ class Pagination {
         let html = '<tr>';
         let end = parseInt(this.count_row) + parseInt(start);
         let dataView = this.data.slice(start, end);
-        let propertyData = Object.getOwnPropertyNames(dataView[0]);
+        let propertyData = [];
+        try {
+            propertyData = Object.getOwnPropertyNames(dataView[0]);
+        } catch (error) {
+
+        }
         propertyData = propertyData.filter(function(item) {
             return item != "link";
         })
@@ -121,7 +126,15 @@ class Pagination {
                 </tr>`;
 
         }
-        document.getElementById(`tbody${this.tableId}`).innerHTML = html;
+        $(`#tbody${this.tableId}`).html($(html));
+
+        $("#totalTable tr td:nth-child(2), td:nth-child(6)").hover(function() {
+            $(this).css("text-decoration", "underline");
+        }, function() {
+            $(this).css("text-decoration", "none");
+        })
+
+
     }
 
     change_page() {
@@ -172,13 +185,10 @@ function filterData(dataset) {
     let dataFilter = dataset;
     let input = document.getElementById("search");
     let filter = input.value.toUpperCase();
-    for (let i in dataFilter) {
-        if (dataFilter[i].name.toUpperCase().indexOf(filter) > -1) {
-            dataSearchProject.push(dataFilter[i]);
-        }
-    }
+    dataSearchProject = dataFilter.filter(function(i) {
+        return i.name.toUpperCase().indexOf(filter) > -1
+    })
     return dataSearchProject
-
 }
 
 function setDataFilter(table, dataset) {
@@ -197,16 +207,20 @@ $(function() {
     });
 });
 $('#btnSearchDate').on('click', function() {
-    var dataSearchDate = [];
-    var startDate = new Date($('#startDate').val());
-    var endDate = new Date($('#endDate').val());
-    dataSearchDate = project.filter(function(i) {
-        var startDateProject = new Date(i.start);
-        var endDateProject = new Date(i.end);
-        return startDateProject >= startDate && startDateProject <= endDate || endDateProject >= startDate && endDateProject <= endDate
-    });
-    console.log(dataSearchDate)
-    setDataFilter(table0, dataSearchDate)
+    if ($('#startDate').val() != "" && $('#endDate').val() != "") {
+        var dataSearchDate = [];
+        var startDate = new Date($('#startDate').val());
+        var endDate = new Date($('#endDate').val());
+        dataSearchDate = project.filter(function(i) {
+            var startDateProject = new Date(i.start);
+            var endDateProject = new Date(i.end);
+            return startDateProject >= startDate && startDateProject <= endDate || endDateProject >= startDate && endDateProject <= endDate
+        });
+        console.log(dataSearchDate)
+        setDataFilter(table0, dataSearchDate)
+    } else {
+        alert("Start Date and End Date is not none!")
+    }
 
 });
 $('#btnClearSearchDate').on('click', function() {
@@ -300,4 +314,85 @@ $("#totalTable tr td:nth-child(2), td:nth-child(6)").hover(function() {
     $(this).css("text-decoration", "underline");
 }, function() {
     $(this).css("text-decoration", "none");
+})
+$(".switch input").click(function() {
+    let index = $(this).closest("tr").index();
+    let status = $(this).closest("tr").find(`td:eq(2)`);
+
+    let setStatus = 1 - parseInt(status.text())
+    $(this).closest("tr").find(`td:eq(2)`).text(setStatus)
+})
+class Clock {
+    constructor(minu, sec, msec, state) {
+        this.minu = minu;
+        this.sec = sec;
+        this.msec = msec;
+        this.state = state;
+        this.count = count;
+
+    }
+    start() {
+        if (this.state != 0) {
+            this.state = 0;
+            this.count = setInterval(() => {
+                console.log("this", this.state)
+                this.msec++
+                    if (this.msec == 100) {
+                        this.msec = 0
+                        this.sec++;
+                        if (this.sec == 60) {
+                            this.sec = 0;
+                            this.minu++;
+                        }
+                    }
+                document.getElementById("time").innerHTML = this.minu + ":" + this.sec + ":" + this.msec;
+
+            }, 10)
+        }
+
+
+    }
+    stop() {
+        this.state = 1;
+        clearInterval(this.count);
+        console.log(this.msec, this.sec);
+        this.minu = 0;
+        this.sec = 0;
+        this.msec = 0;
+    }
+    reset() {
+        clearInterval(this.count)
+        this.state = 1;
+        this.start();
+        this.minu = 0;
+        this.sec = 0;
+        this.msec = 0;
+    }
+    resume() {
+        if (this.state == 0) {
+            this.state = 2;
+            clearInterval(this.count)
+        } else if (this.state == 2) {
+            this.start();
+        }
+    }
+
+}
+$(document).ready(function() {
+    //var clock = new Clock(1)
+    //clock.start();
+})
+
+var clock = new Clock(0, 0, 0, 1)
+document.querySelector("#stop").addEventListener('click', function() {
+    clock.stop();
+})
+document.querySelector("#resume").addEventListener('click', function() {
+    clock.resume();
+})
+document.querySelector("#start").addEventListener('click', function() {
+    clock.start();
+})
+document.querySelector("#reset").addEventListener('click', function() {
+    clock.reset();
 })
